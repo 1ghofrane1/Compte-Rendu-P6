@@ -11,13 +11,16 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie": "^1.0.2",
+    "i18next": "^24.2.3",
     "jotai": "^2.12.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
     "next": "^15.1.7",
+    "next-i18next": "^15.4.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

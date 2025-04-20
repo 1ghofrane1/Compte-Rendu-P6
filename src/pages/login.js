@@ -4,13 +4,17 @@ import { useRouter } from 'next/router';
 import styles from '@/styles/AuthForms.module.css';
 import { userAtom, authLoadingAtom } from '@/atoms/authAtoms';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next'; // Import useTranslation
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'; // Import serverSideTranslations
 
 export default function Login() {
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useAtom(authLoadingAtom);
   const [, setUser] = useAtom(userAtom);
   const router = useRouter();
+  const { t } = useTranslation('common'); // Initialize useTranslation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,12 +30,12 @@ export default function Login() {
         router.push('/profile');
       } else {
         const errorData = await response.json();
-        console.error('Login échoué :', errorData);
-        alert(`Login échoué : ${errorData.message || 'Invalid credentials'}`);
+        console.error('Login échoué:', errorData);
+        alert(t('loginFailed')); // Use translation for alert - generic failure message is better
       }
     } catch (error) {
-      console.error('Erreur lors du login :', error);
-      alert('Erreur lors du login. Veuillez réessayer.');
+      console.error('Erreur lors du login:', error);
+      alert(t('loginError')); // Use translation for alert
     } finally {
       setLoading(false);
     }
@@ -40,10 +44,10 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <main className={styles.formContainer}>
-        <h1 className={styles.formTitle}>Connexion</h1>
+        <h1>{t('login')}</h1> {/* Use translation */}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('email')}</label> {/* Use translation */}
             <input
               type="email"
               id="email"
@@ -53,7 +57,7 @@ export default function Login() {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label htmlFor="password">Mot de passe</label>
+            <label htmlFor="password">{t('password')}</label> {/* Use translation */}
             <input
               type="password"
               id="password"
@@ -63,13 +67,38 @@ export default function Login() {
             />
           </div>
           <button type="submit" className={styles.submitButton} disabled={loading}>
-            Se Connecter
+            {t('loginButton')} {/* Use translation */}
           </button>
         </form>
         <p className={styles.formFooter}>
-          Pas de compte ? <Link href="/register" className={styles.link}>S’inscrire</Link>
+          {t('noAccount')} <Link href="/register" className={styles.link}>{t('signUp')}</Link> {/* Use translation */}
         </p>
       </main>
     </div>
   );
 }
+
+/*export const getStaticProps = async (context) => {
+  const locale = context?.locale || 'fr'; // Default to 'fr' if locale is undefined
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+};*/
+
+/*export const getStaticProps = async ({locale}) => ({
+  
+  props: {
+    ...(await serverSideTranslations(locale, ['common'])),
+  },
+
+});*/
+
+export const getStaticProps = async ({ locale = 'en' }) => { // Définit 'en' comme valeur par défaut
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])), // Charge les traductions pour le namespace 'common'
+    },
+  };
+};
